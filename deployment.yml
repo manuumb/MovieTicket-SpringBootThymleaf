@@ -1,86 +1,75 @@
----
-# Frontend Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: default
+  name: movie-ticket
+  labels:
+    app: movie-ticket
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: default
+      app: movie-ticket
   template:
     metadata:
       labels:
-        app: default
+        app: movie-ticket
     spec:
       containers:
-      - name: default
-        image: movieticket/default:latest
-        ports:
-        - containerPort: 80
-
+        - name: movie-ticket
+          image: manuhubumb/movieticket:latest 
+          ports:
+            - containerPort: 1234
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://root:LLyFpBWYDKXeGNLicVocJwVUrNdGwmZh@autorack.proxy.rlwy.net:13077/railway"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "Rootadmin1234"
+            - name: SPRING_MAIL_HOST
+              value: "smtp.gmail.com"
+            - name: SPRING_MAIL_PORT
+              value: "587"
+            - name: SPRING_MAIL_USERNAME
+              value: "mounikakg245@gmail.com"
+            - name: SPRING_MAIL_PASSWORD
+              value: "qncqkbvxpxmvqvxa"
+            - name: CLOUDINARY_CLOUD_NAME
+              value: "djkyoabl5"
+            - name: CLOUDINARY_KEY
+              value: "437797232682629"
+            - name: CLOUDINARY_SECRET
+              value: "eGy3AaCBV6aH7gLbUe67lw2RZrg"
+            - name: RAZORPAY_KEY
+              value: "rzp_test_f4vcAPoh0RDZfi"
+            - name: RAZORPAY_SECRET
+              value: "jjblWSJ6F7NJuPUOtNmDjg4i"
+            - name: ADMIN_EMAIL
+              value: "admin"
+            - name: ADMIN_PASSWORD
+              value: "admin"
+            - name: SERVER_SSL_KEY_STORE
+              value: "classpath:/myfile.p12"
+            - name: SERVER_SSL_KEY_STORE_PASSWORD
+              value: "abc123"
+            - name: SERVER_SSL_KEY_ALIAS
+              value: "myfile"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
 ---
-# Backend Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: default
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: default
-  template:
-    metadata:
-      labels:
-        app: default
-    spec:
-      containers:
-      - name: default
-        image: movieticket/default:latest
-        ports:
-        - containerPort: 8080
-        env:
-        - name: DB_HOST
-          value: "your-rds-endpoint"
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: db-credentials
-              key: username
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-credentials
-              key: password
-
----
-# Frontend Service (LoadBalancer)
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-service
+  name: movie-ticket
 spec:
-  type: LoadBalancer
-  selector:
-    app: default
+  type: ClusterIP 
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
-
----
-# Backend Service (ClusterIP)
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-service
-spec:
-  type: ClusterIP
+    - port: 1234
+      targetPort: 1234
   selector:
-    app: default
-  ports:
-  - protocol: TCP
-    port: 8080
-    targetPort: 8080
+    app: movie-ticket
