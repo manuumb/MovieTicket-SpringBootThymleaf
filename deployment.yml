@@ -2,75 +2,75 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: movie-ticket
+  name: backend
   labels:
-    app: movie-ticket
+    app: backend
 spec:
-  replicas: 1
+  replicas: 1  # Set replicas to 1
   selector:
     matchLabels:
-      app: movie-ticket
+      app: backend
   template:
     metadata:
       labels:
-        app: movie-ticket
+        app: backend
     spec:
       containers:
-        - name: movie-ticket
-          image: manuhubumb/movieticket:latest 
+        - name: backend
+          image: manuhubumb/movieticket:latest  
           ports:
-            - containerPort: 1234
+            - containerPort: 1234  # Adjust to your backend port
           env:
-            - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mysql://root:LLyFpBWYDKXeGNLicVocJwVUrNdGwmZh@autorack.proxy.rlwy.net:13077/railway"
-            - name: SPRING_DATASOURCE_USERNAME
-              value: "root"
-            - name: SPRING_DATASOURCE_PASSWORD
-              value: "Rootadmin1234"
-            - name: SPRING_MAIL_HOST
-              value: "smtp.gmail.com"
-            - name: SPRING_MAIL_PORT
-              value: "587"
-            - name: SPRING_MAIL_USERNAME
-              value: "mounikakg245@gmail.com"
-            - name: SPRING_MAIL_PASSWORD
-              value: "qncqkbvxpxmvqvxa"
-            - name: CLOUDINARY_CLOUD_NAME
-              value: "djkyoabl5"
-            - name: CLOUDINARY_KEY
-              value: "437797232682629"
-            - name: CLOUDINARY_SECRET
-              value: "eGy3AaCBV6aH7gLbUe67lw2RZrg"
-            - name: RAZORPAY_KEY
-              value: "rzp_test_f4vcAPoh0RDZfi"
-            - name: RAZORPAY_SECRET
-              value: "jjblWSJ6F7NJuPUOtNmDjg4i"
-            - name: ADMIN_EMAIL
-              value: "admin"
-            - name: ADMIN_PASSWORD
-              value: "admin"
-            - name: SERVER_SSL_KEY_STORE
-              value: "classpath:/myfile.p12"
-            - name: SERVER_SSL_KEY_STORE_PASSWORD
-              value: "abc123"
-            - name: SERVER_SSL_KEY_ALIAS
-              value: "myfile"
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "500m"
-            limits:
-              memory: "1Gi"
-              cpu: "1"
+            - name: DATABASE_URL
+              value: "url=jdbc:mysql://root:Rootadmin1234@autorack.proxy.rlwy.net:13077/railway"  # Update your DB config
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"  # Adjust as necessary
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: movie-ticket
+  name: backend
 spec:
-  type: ClusterIP 
+  type: LoadBalancer
   ports:
-    - port: 1234
-      targetPort: 1234
+    - port: 80
+      targetPort: 1234  # Adjust to your backend port
   selector:
-    app: movie-ticket
+    app: backend
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1  # Set replicas to 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: manuhubumb/movieticket:latest  # Replace with your frontend image
+          ports:
+            - containerPort: 80  # Adjust to your frontend port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80  # Adjust to your frontend port
+  selector:
+    app: frontend
