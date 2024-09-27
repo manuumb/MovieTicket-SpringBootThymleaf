@@ -3,20 +3,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: default
   template:
     metadata:
       labels:
-        app: frontend
+        app: default
     spec:
       containers:
-      - name: frontend
-        image: movieticket/frontend:latest
+      - name: default
+        image: movieticket/default:latest
         ports:
         - containerPort: 80
 
@@ -25,20 +25,20 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: default
   template:
     metadata:
       labels:
-        app: backend
+        app: default
     spec:
       containers:
-      - name: backend
-        image: movieticket/backend:latest
+      - name: default
+        image: movieticket/default:latest
         ports:
         - containerPort: 8080
         env:
@@ -64,7 +64,7 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: frontend
+    app: default
   ports:
   - protocol: TCP
     port: 80
@@ -79,7 +79,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: backend
+    app: default
   ports:
   - protocol: TCP
     port: 8080
