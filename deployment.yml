@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: manuhubumb/frontend:latest
+        image: movieticket/frontend:latest
         ports:
         - containerPort: 80
 
@@ -38,7 +38,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: manuhubumb/backend:latest
+        image: movieticket/backend:latest
         ports:
         - containerPort: 8080
         env:
